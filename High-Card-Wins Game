@@ -1,0 +1,188 @@
+import random
+deck=dict()
+
+#You are not allowed to modify this function.
+def createDeck():
+    """
+    Purpose: Creates a standard 52-card deck with 4 suits
+    Parameters: None
+    Returns: None (modifies global deck variable)
+    """
+    global deck
+    deck={'clubs':['2 of','3 of', '4 of', '5 of','6 of','7 of','8 of','9 of','10 of','Jack of', 'Queen of', 'King of','Ace of'],'diamonds':['2 of','3 of', '4 of', '5 of','6 of','7 of','8 of','9 of','10 of','Jack of', 'Queen of', 'King of','Ace of'],'hearts':['2 of','3 of', '4 of', '5 of','6 of','7 of','8 of','9 of','10 of','Jack of', 'Queen of', 'King of','Ace of'],'Spades':['2 of','3 of', '4 of', '5 of','6 of','7 of','8 of','9 of','10 of','Jack of', 'Queen of', 'King of','Ace of']}
+
+def determineWinnerOfRound(playerCard, cpuCard):
+    """
+    Purpose: Determines the winner of a round by comparing card values
+    Parameters: playerCard (str) - player's card value, cpuCard (str) - CPU's card value
+    Returns: str - 'PLAYER', 'CPU', or 'TIE'
+    """
+    # Define card ranking (Ace is lowest, King is highest)
+    cardValues = {'Ac': 1, '2 ': 2, '3 ': 3, '4 ': 4, '5 ': 5, '6 ': 6, 
+                  '7 ': 7, '8 ': 8, '9 ': 9, '10': 10, 'Ja': 11, 'Qu': 12, 'Ki': 13}
+    
+    # Strip and get first 2 characters for comparison
+    playerCard = playerCard.strip()
+    cpuCard = cpuCard.strip()
+    
+    # Get values from dictionary
+    playerValue = cardValues[playerCard]
+    cpuValue = cardValues[cpuCard]
+    
+    # Compare and return winner
+    if playerValue > cpuValue:
+        return 'PLAYER'
+    elif cpuValue > playerValue:
+        return 'CPU'
+    else:
+        return 'TIE'
+
+def printTheDeck(player, CPU, ties):
+    """
+    Purpose: Prints the current cards remaining in the deck in rows of 4
+    Parameters: player (int), CPU (int), ties (int) - current round totals
+    Returns: None
+    """
+    print("\n--- Current Deck ---")
+    cardCount = 0
+    allCards = []
+    
+    # Collect all remaining cards from all suits
+    for suit in deck:
+        for card in deck[suit]:
+            allCards.append(card + ' ' + suit)
+    
+    # Print cards in rows of 4, left-justified with 15 spaces per column
+    for i in range(len(allCards)):
+        print(f"{allCards[i]:<15}", end='')
+        cardCount += 1
+        if (i + 1) % 4 == 0:
+            print()  # New line after every 4 cards
+    
+    # Print newline if last row wasn't complete
+    if len(allCards) % 4 != 0:
+        print()
+    
+    print(f"\nCards remaining in deck: {cardCount}\n")
+
+# You are not allowed to modify this function.
+def pullCard():
+    """
+    Purpose: Randomly selects and removes a card from the deck
+    Parameters: None
+    Returns: str - the selected card (e.g., "5 of clubs")
+    """
+    suite=random.choice(list(deck.keys()))
+    card=random.choice(deck[suite])
+    removeCard(suite,card)
+    return card+' '+suite
+    
+def removeCard(suite, card):
+    """
+    Purpose: Removes a specific card from the deck
+    Parameters: suite (str) - the suit of the card, card (str) - the card value
+    Returns: None (modifies global deck variable)
+    """
+    global deck
+    deck[suite].remove(card)
+
+#This function should print out if the winner is player, CPU
+def chooseFinalWinnerOfGame(player,CPU,ties):
+    """
+    Purpose: Determines and displays the final winner of the game
+    Parameters: player (int) - player's rounds won, CPU (int) - CPU's rounds won, ties (int) - tied rounds
+    Returns: None
+    """
+    if ties==2:
+        print('\nTwo rounds had a tie, so the game was ended.')
+    if player>CPU:
+        print('\nPLAYER is the winner!!')
+    elif player==CPU:
+        print('\nThere is a Tie.')
+    else: print('\nCPU is the winner!!')
+    print(f'\nThe final rounds score is PLAYER:{player} and CPU:{CPU} and Tied:{ties}')
+
+def instructions():
+    """
+    Purpose: Displays the game instructions to the player
+    Parameters: None
+    Returns: None
+    """
+    print("="*70)
+    print("Welcome to High Card Wins (HCW)!")
+    print("="*70)
+    print("\nGAME RULES:")
+    print("- You and the CPU will each draw a card from a 52-card deck")
+    print("- The player with the higher card wins both cards")
+    print("- Card ranking: King (highest) to Ace (lowest)")
+    print("- If there's a tie, both cards are discarded and the round is replayed")
+    print("- The game ends after 15 rounds OR 2 ties (whichever comes first)")
+    print("\nDURING YOUR TURN:")
+    print("- Press ENTER to draw your card")
+    print("- Type DECK to see remaining cards in the deck")
+    print("- Type SCORE to see current round totals")
+    print("\nGood luck!")
+    print("="*70)
+    
+def playerChoice(player, CPU, ties):
+    """
+    Purpose: Prompts player for input and handles DECK, SCORE, or Enter commands
+    Parameters: player (int) - player's rounds won, CPU (int) - CPU's rounds won, ties (int) - tied rounds
+    Returns: None
+    """
+    while True:
+        choice = input("Press ENTER to draw a card (or type DECK or SCORE): ").strip().upper()
+        
+        if choice == '':
+            # Player pressed Enter, continue with the game
+            break
+        elif choice == 'DECK':
+            printTheDeck(player, CPU, ties)
+        elif choice == 'SCORE':
+            theScore(player, CPU, ties)
+        else:
+            print("Invalid choice. Please choose again.\n")
+
+# You are NOT allowed to modify this function.
+def theScore(player,CPU,ties):
+    """
+    Purpose: Displays the current round totals for player, CPU, and ties
+    Parameters: player (int) - player's rounds won, CPU (int) - CPU's rounds won, ties (int) - tied rounds
+    Returns: None
+    """
+    print(f'\nThe rounds score is player:{player} and CPU:{CPU} and Tied:{ties}.')
+    print()
+
+# YOU ARE NOT ALLOWED TO MODIFY main().
+def main():
+    instructions()
+    print()
+    createDeck()
+    turns=1
+    pTotal=0
+    cpuTotal=0
+    tieTotal=0
+    while turns<=15 and tieTotal<2:
+        print()
+        playerChoice(pTotal,cpuTotal,tieTotal)
+        player=pullCard()      
+        CPU=pullCard()
+        print('-'*30+'Round '+str(turns)+'-'*30)
+        print("Player card is",player)
+        print("CPU card is",CPU)
+        roundWinner=determineWinnerOfRound(player[0:2],CPU[0:2])
+        print(f"{roundWinner} wins Round {turns}.")
+        if roundWinner=='PLAYER':          
+            pTotal=pTotal+1
+            turns=turns+1       
+        elif roundWinner=='CPU':
+            cpuTotal=cpuTotal+1
+            turns=turns+1           
+        else:
+            print(f"No one wins a tie. We should replay Round {turns}.")
+            tieTotal=tieTotal+1
+ 
+        
+    chooseFinalWinnerOfGame(pTotal,cpuTotal,tieTotal)
+        
+main()
